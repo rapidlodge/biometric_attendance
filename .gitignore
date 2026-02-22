@@ -1,0 +1,11 @@
+# Ignore the large YOLO data folder
+hex_face/Custom-Data-YOLOv8-Person-De*/
+
+# Ignore Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore OS junk
+.DS_Store
+Thumbs.db

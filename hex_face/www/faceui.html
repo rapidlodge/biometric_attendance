@@ -1,0 +1,61 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Biometric Attendance System{% endblock %}
+
+{% block head_include %}
+  <link rel="stylesheet" href="/assets/hex_face/css/face.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block page_content %}
+<div class="kiosk-container">
+  
+  <!-- Welcome Screen -->
+  <div id="welcome-screen" class="screen">
+    <div class="header">
+      <img src="https://via.placeholder.com/150x50/FFFFFF/000000?text=Your+Logo" alt="Company Logo" class="logo">
+    </div>
+    <div class="content">
+      <div id="clock">6:06 PM</div>
+      <div id="date">Monday, 25 August 2025</div>
+    </div>
+    <div class="footer">
+      <label for="office_id" class="office-label">Office ID</label>
+      <input 
+        type="text" 
+        id="office_id" 
+        name="office_id" 
+        placeholder="Enter Office ID"
+      >
+      <button id="scan-button">TAP TO SCAN</button>
+    </div>
+  </div>
+
+  <!-- Scan Screen -->
+  <div id="scan-screen" class="screen hidden">
+    <div class="content">
+      <p class="instruction-text">Please position your face in the frame</p>
+      <div class="camera-feed">
+        <video id="camera" autoplay playsinline></video>
+        <canvas id="snapshot" class="hidden"></canvas>
+        <div class="face-outline"></div>
+      </div>
+      <p class="status-text" id="scan-status">Scanning...</p>
+    </div>
+  </div>
+
+  <!-- Confirmation Screen -->
+  <div id="confirmation-screen" class="screen hidden">
+    <div class="content">
+      <div id="confirmation-icon">✔️</div>
+      <h2 id="confirmation-message">Welcome, Jane Doe!</h2>
+      <p id="confirmation-details">You have successfully clocked in at 6:06 PM.</p>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block footer %}{% endblock %}

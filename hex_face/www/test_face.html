@@ -1,0 +1,37 @@
+
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Frappe Face Test</title>
+  <!-- frappe.js should already be loaded in your site -->
+</head>
+<body>
+  <h2>Test Face Recognition via frappe.call</h2>
+  <button id="sendBtn">Send Test Image</button>
+
+  <pre id="result"></pre>
+
+  <script>
+    document.getElementById("sendBtn").addEventListener("click", () => {
+      // Dummy image, replace with real base64 if needed
+      const fakeImage = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD..."; 
+
+      frappe.call({
+        method: "hex_face.api_2.post_attendance_via_method",
+        args: {
+          
+          office_id: "redmi-13"   // change to real Employee ID
+        },
+        callback: function(r) {
+          document.getElementById("result").textContent = JSON.stringify(r.message, null, 2);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+
+{% endblock %}

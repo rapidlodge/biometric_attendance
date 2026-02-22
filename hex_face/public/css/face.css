@@ -1,0 +1,200 @@
+/* General Body & Font Styling */
+body {
+    background-color: #f0f2f5;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: #333;
+}
+
+/* Main Kiosk Container */
+.kiosk-container {
+    width: 380px;
+    height: 680px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Universal Screen Styling */
+.screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px;
+    box-sizing: border-box;
+    transition: opacity 0.5s ease;
+}
+
+.screen.hidden {
+    display: none;
+}
+
+/* --- Welcome Screen --- */
+#welcome-screen .header {
+    width: 100%;
+    text-align: center;
+}
+
+#welcome-screen .logo {
+    opacity: 0.7;
+}
+
+#welcome-screen .content {
+    text-align: center;
+}
+
+#welcome-screen #clock {
+    font-size: 5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+#welcome-screen #date {
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: #666;
+}
+
+#welcome-screen .footer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.office-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #444;
+}
+
+#office_id {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1rem;
+    border: 2px solid #ced4da;
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+
+#office_id:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+}
+
+#scan-button {
+    width: 100%;
+    padding: 20px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(90deg, #007BFF, #0056b3);
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#scan-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
+}
+
+/* --- Scan Screen --- */
+#scan-screen .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+}
+
+.instruction-text {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Camera feed circle */
+.camera-feed {
+    width: 280px;
+    height: 280px;
+    background-color: #e9ecef;
+    border: 2px dashed #ced4da;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Video inside circle */
+.camera-feed video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Fills circle without distortion */
+    border-radius: 50%;
+}
+
+/* Face outline overlay */
+.face-outline {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    border: 2px solid #adb5bd;
+    border-radius: 50%;
+    opacity: 0.6;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.status-text {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #007BFF;
+}
+
+/* --- Confirmation Screen --- */
+#confirmation-screen .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+}
+
+#confirmation-icon {
+    font-size: 5rem;
+    color: #28a745;
+}
+
+#confirmation-message {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+#confirmation-details {
+    font-size: 1.1rem;
+    color: #555;
+}

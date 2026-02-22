@@ -1,0 +1,81 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-09-11 16:57:35.109697",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "api_key",
+  "api_secret",
+  "model",
+  "train_images",
+  "stop"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "fetch_from": "user.api_key",
+   "fieldname": "api_key",
+   "fieldtype": "Data",
+   "label": "API KEY",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "user.api_secret",
+   "fieldname": "api_secret",
+   "fieldtype": "Password",
+   "label": "API SECRET",
+   "read_only": 1
+  },
+  {
+   "fieldname": "model",
+   "fieldtype": "Select",
+   "label": "Model",
+   "options": "hog\ncnn"
+  },
+  {
+   "description": "Only Click after updated images of employees",
+   "fieldname": "train_images",
+   "fieldtype": "Button",
+   "label": "Train Images"
+  },
+  {
+   "default": "0",
+   "description": "Stop Automatic Attendance",
+   "fieldname": "stop",
+   "fieldtype": "Check",
+   "label": "STOP"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-09-14 14:36:59.100946",
+ "modified_by": "Administrator",
+ "module": "Hex Face",
+ "name": "Face Attendance Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
