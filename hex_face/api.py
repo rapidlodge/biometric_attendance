@@ -1,46 +1,61 @@
 from pathlib import Path
 from collections import Counter
 from datetime import datetime
-import base64, re, numpy as np, cv2, pickle, os, requests, json
+import base64, re, numpy as np, cv2, pickle, requests, json
 import frappe, face_recognition
-from frappe.utils.file_manager import save_file
 from hex_face.utils.settings import get_face_settings
 from ultralytics import YOLO  # Added for anti-spoof7
 # ==============================
 # Configurations (⚠️ keep secrets outside code)
 # ==============================
 
-SITE_URL = "https://needed-pleasantly-macaque.ngrok-free.app"
-
 settings = get_face_settings()
 
 API_KEY = settings.get("api_key", "").strip()
 API_SECRET = settings.get("api_secret", "").strip()
 MODEL = settings["model"]
+SITE_URL = settings.get("site_url", "").strip()
+REQUEST_ATTENDANCE_METHOD = settings.get(
+    "attendance_method",
+    "/api/method/hrms.hr.doctype.employee_checkin.employee_checkin.add_log_based_on_employee_field",
+).strip()
 
-REQUEST_ATTENDANCE_METHOD = (
-    "/api/method/hrms.hr.doctype.employee_checkin.employee_checkin.add_log_based_on_employee_field"
+DEFAULT_TRAINING_DIR = Path(
+    settings.get("training_path")
+    or "/workspace/development/frappe-bench/apps/hex_face/hex_face/training"
 )
-
+DEFAULT_OUTPUT_DIR = Path(
+    settings.get("output_path")
+    or "/workspace/development/frappe-bench/apps/hex_face/hex_face/output"
+)
+DEFAULT_VALIDATION_DIR = Path(
+    settings.get("validation_path")
+    or "/workspace/development/frappe-bench/apps/hex_face/hex_face/validation"
+)
 DEFAULT_ENCODINGS_PATH = Path(
-    "/workspace/development/frappe-bench/apps/hex_face/hex_face/output/encodings.pkl"
+    settings.get("encodings_path")
+    or str(DEFAULT_OUTPUT_DIR / "encodings.pkl")
 )
+YOLO_MODEL_PATH = settings.get("yolo_model_path") or (
+    "/workspace/development/frappe-bench/apps/hex_face/hex_face/Custom-Data-YOLOv8-Person-Detection/ckpts/best.pt"
+)
+SPOOF_CONFIDENCE_THRESHOLD = float(settings.get("spoof_confidence_threshold") or 0.80)
 
 auth_header = {"Authorization": f"token {API_KEY}:{API_SECRET}"}
 
 # ==============================
 # Folder Setup
 # ==============================
-Path("/workspace/development/frappe-bench/apps/hex_face/hex_face/training").mkdir(exist_ok=True)
-Path("/workspace/development/frappe-bench/apps/hex_face/hex_face/output").mkdir(exist_ok=True)
-Path("/workspace/development/frappe-bench/apps/hex_face/hex_face/validation").mkdir(exist_ok=True)
+DEFAULT_TRAINING_DIR.mkdir(parents=True, exist_ok=True)
+DEFAULT_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+DEFAULT_VALIDATION_DIR.mkdir(parents=True, exist_ok=True)
 
 print(f"Using encodings from: {DEFAULT_ENCODINGS_PATH}")
 
 # ==============================
 # Anti-Spoof Model (YOLO)
 # ==============================
-yolo_model = YOLO("/workspace/development/frappe-bench/apps/hex_face/hex_face/Custom-Data-YOLOv8-Person-Detection/ckpts/best.pt")
+yolo_model = YOLO(YOLO_MODEL_PATH)
 
 def detect_person(image_path):
     img = cv2.imread(image_path)
@@ -62,9 +77,7 @@ def detect_person(image_path):
 def save_to_validation(image_bytes: bytes, employee_name: str):
     today = datetime.now().strftime("%Y-%m-%d")
 
-    folder_path = Path(
-        f"/workspace/development/frappe-bench/apps/hex_face/hex_face/validation/{employee_name}/{today}"
-    )
+    folder_path = DEFAULT_VALIDATION_DIR / employee_name / today
     folder_path.mkdir(parents=True, exist_ok=True)
 
     filename = f"{datetime.now().strftime('%H-%M-%S')}_snapshot.jpg"
@@ -82,7 +95,7 @@ def save_to_validation(image_bytes: bytes, employee_name: str):
 def encode_known_faces(model: str = "hog", encodings_location=DEFAULT_ENCODINGS_PATH) -> None:
     names, encodings = [], []
 
-    for filepath in Path("/workspace/development/frappe-bench/apps/hex_face/hex_face/training").glob("**/*"):
+    for filepath in DEFAULT_TRAINING_DIR.glob("**/*"):
         if filepath.is_file():
             name = filepath.parent.name
             image = face_recognition.load_image_file(filepath)
@@ -143,7 +156,7 @@ def recognized_faces(image=None, images=None, office_id=None, model: str = "hog"
             img_bytes = base64.b64decode(img_data)
 
             # Save snapshot temporarily for YOLO check
-            temp_path = "/workspace/development/frappe-bench/apps/hex_face/hex_face/temp_check.jpg"
+            temp_path = str(DEFAULT_OUTPUT_DIR / "temp_check.jpg")
             with open(temp_path, "wb") as f:
                 f.write(img_bytes)
 
@@ -157,7 +170,7 @@ def recognized_faces(image=None, images=None, office_id=None, model: str = "hog"
             max_conf = max(obj["confidence"] for obj in yolo_results)
             print("YOLO Confidence:", max_conf)
 
-            if max_conf < 0.80:
+            if max_conf < SPOOF_CONFIDENCE_THRESHOLD:
                 save_to_validation(img_bytes, "spoof_detected")
                 return {"status": "failed", "reason": f"Spoof detected (confidence={max_conf:.2f})"}
 
@@ -249,7 +262,8 @@ def post_attendance_via_method(office_id, latitude=None, longitude=None, locatio
         "timestamp": timestamp,
     }
 
-    if REQUEST_ATTENDANCE_METHOD:
+    if SITE_URL and REQUEST_ATTENDANCE_METHOD:
         url = SITE_URL + REQUEST_ATTENDANCE_METHOD
         r = requests.post(url, json=payload, headers=auth_header, timeout=15)
         return r.status_code == 200
+    return False

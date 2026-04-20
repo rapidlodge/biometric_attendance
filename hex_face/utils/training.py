@@ -3,8 +3,13 @@ import shutil
 from pathlib import Path
 import frappe
 from ..api import encode_known_faces
+from .settings import get_face_settings
 
-TRAINING_DIR = Path("/workspace/development/frappe-bench/apps/hex_face/hex_face/training")
+settings = get_face_settings()
+TRAINING_DIR = Path(
+    settings.get("training_path")
+    or "/workspace/development/frappe-bench/apps/hex_face/hex_face/training"
+)
 
 # def handle_new_employee(doc, method=None):
 #     """

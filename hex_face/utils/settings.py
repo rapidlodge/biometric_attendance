@@ -14,4 +14,12 @@ def get_face_settings():
         ).strip(),
         "model": doc.model,
         "stop": doc.stop,
+        "site_url": (doc.site_url or "").strip(),
+        "attendance_method": (doc.attendance_method or "").strip(),
+        "training_path": (doc.training_path or "").strip(),
+        "output_path": (doc.output_path or "").strip(),
+        "validation_path": (doc.validation_path or "").strip(),
+        "encodings_path": (doc.encodings_path or "").strip(),
+        "yolo_model_path": (doc.yolo_model_path or "").strip(),
+        "spoof_confidence_threshold": float(doc.spoof_confidence_threshold or 0.80),
     }
