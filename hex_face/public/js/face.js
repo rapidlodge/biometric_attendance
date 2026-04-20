@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scanStatus.textContent = "Processing...";
 
         frappe.call({
-          method: 'hex_face.api.reconisssed_faces',
+          method: 'hex_face.api.recognized_faces',
           args: { images: shots, office_id: officeId },
           callback: function (r) {
             scanScreen.classList.add('hidden');

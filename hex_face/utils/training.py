@@ -64,7 +64,9 @@ def sync_employee_images():
         shutil.copy(full_image_path, dest_file)
 
         copied_files.append(str(dest_file))
-        knwn_face = encode_known_faces()
 
-    return {"status": "success", "copied": knwn_face}
+    if not copied_files:
+        return {"status": "failed", "message": "No employee images were available to train."}
 
+    knwn_face = encode_known_faces()
+    return {"status": "success", "copied_files": copied_files, "training": knwn_face}
