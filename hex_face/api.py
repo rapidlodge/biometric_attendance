@@ -107,9 +107,13 @@ def encode_known_faces(model: str = "hog", encodings_location=DEFAULT_ENCODINGS_
 # ==============================
 # Recognition + Spoof Detection
 # ==============================
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def recognized_faces(image=None, images=None, office_id=None, model: str = "hog"):
     try:
+        office_id = (office_id or "").strip()
+        if not office_id:
+            return {"status": "failed", "reason": "office_id is required"}
+
         if images:
             if isinstance(images, str):
                 try:
@@ -122,8 +126,6 @@ def recognized_faces(image=None, images=None, office_id=None, model: str = "hog"
             return {"status": "failed", "reason": "No image(s) provided"}
 
         results = []
-        recognized_names = []
-
         for img in images:
             if isinstance(img, list):
                 img = img[0]
@@ -172,7 +174,14 @@ def recognized_faces(image=None, images=None, office_id=None, model: str = "hog"
         if success_results:
             from collections import Counter
             final_name = Counter([r["name"] for r in success_results]).most_common(1)[0][0]
-            post_attendance_via_method(office_id)
+
+            if office_id != final_name:
+                return {
+                    "status": "failed",
+                    "reason": "Recognized employee does not match the provided office_id",
+                }
+
+            post_attendance_via_method(final_name)
             return {"status": "success", "name": final_name}
 
         return {"status": "failed", "reason": "No consistent recognition"}
@@ -219,7 +228,7 @@ def _recognize_face(unknown_encoding, name_encodings):
 # ==============================
 # Attendance Posting
 # ==============================
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def post_attendance_via_method(office_id, latitude=None, longitude=None, location_name=None):
     if settings["stop"]:
         return {
