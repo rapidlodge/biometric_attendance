@@ -8,7 +8,17 @@
   "user",
   "api_key",
   "api_secret",
+  "section_break_auth",
+  "site_url",
+  "attendance_method",
   "model",
+  "spoof_confidence_threshold",
+  "section_break_storage",
+  "training_path",
+  "output_path",
+  "validation_path",
+  "encodings_path",
+  "yolo_model_path",
   "train_images",
   "stop"
  ],
@@ -34,10 +44,73 @@
    "read_only": 1
   },
   {
+   "fieldname": "section_break_auth",
+   "fieldtype": "Section Break",
+   "label": "Attendance API Configuration"
+  },
+  {
+   "description": "Base URL where attendance should be posted (e.g. https://erp.example.com)",
+   "fieldname": "site_url",
+   "fieldtype": "Data",
+   "label": "Site URL",
+   "reqd": 1
+  },
+  {
+   "default": "/api/method/hrms.hr.doctype.employee_checkin.employee_checkin.add_log_based_on_employee_field",
+   "description": "Whitelisted method path appended to Site URL",
+   "fieldname": "attendance_method",
+   "fieldtype": "Data",
+   "label": "Attendance Method Path",
+   "reqd": 1
+  },
+  {
    "fieldname": "model",
    "fieldtype": "Select",
    "label": "Model",
    "options": "hog\ncnn"
+  },
+  {
+   "default": "0.8",
+   "description": "Minimum YOLO confidence required to pass anti-spoof gate",
+   "fieldname": "spoof_confidence_threshold",
+   "fieldtype": "Float",
+   "label": "Spoof Confidence Threshold",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_storage",
+   "fieldtype": "Section Break",
+   "label": "Storage and Model Paths"
+  },
+  {
+   "description": "Folder containing per-employee training images",
+   "fieldname": "training_path",
+   "fieldtype": "Data",
+   "label": "Training Path"
+  },
+  {
+   "description": "Folder where generated model artifacts are stored",
+   "fieldname": "output_path",
+   "fieldtype": "Data",
+   "label": "Output Path"
+  },
+  {
+   "description": "Folder where recognition/validation snapshots are saved",
+   "fieldname": "validation_path",
+   "fieldtype": "Data",
+   "label": "Validation Path"
+  },
+  {
+   "description": "Path to face encodings pickle file",
+   "fieldname": "encodings_path",
+   "fieldtype": "Data",
+   "label": "Encodings File Path"
+  },
+  {
+   "description": "Path to anti-spoof YOLO model weights",
+   "fieldname": "yolo_model_path",
+   "fieldtype": "Data",
+   "label": "YOLO Model Path"
   },
   {
    "description": "Only Click after updated images of employees",
@@ -57,7 +130,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-09-14 14:36:59.100946",
+ "modified": "2026-04-20 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Hex Face",
  "name": "Face Attendance Settings",

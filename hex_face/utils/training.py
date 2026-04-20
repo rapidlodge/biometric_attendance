@@ -3,8 +3,13 @@ import shutil
 from pathlib import Path
 import frappe
 from ..api import encode_known_faces
+from .settings import get_face_settings
 
-TRAINING_DIR = Path("/workspace/development/frappe-bench/apps/hex_face/hex_face/training")
+settings = get_face_settings()
+TRAINING_DIR = Path(
+    settings.get("training_path")
+    or "/workspace/development/frappe-bench/apps/hex_face/hex_face/training"
+)
 
 # def handle_new_employee(doc, method=None):
 #     """
@@ -64,7 +69,9 @@ def sync_employee_images():
         shutil.copy(full_image_path, dest_file)
 
         copied_files.append(str(dest_file))
-        knwn_face = encode_known_faces()
 
-    return {"status": "success", "copied": knwn_face}
+    if not copied_files:
+        return {"status": "failed", "message": "No employee images were available to train."}
 
+    knwn_face = encode_known_faces()
+    return {"status": "success", "copied_files": copied_files, "training": knwn_face}
